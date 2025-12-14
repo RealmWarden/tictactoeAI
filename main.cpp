@@ -14,7 +14,7 @@ int main() {
     int rewardForTie = 1;
     int rewardForLoss = -3;
     int gamesPerIndividual = 200;
-    int numGenerations = 2000;
+    int numGenerations = 5000;
 
     /* initialize random weights for neural network */
     float weightsLayerOne_parent[10][9];
