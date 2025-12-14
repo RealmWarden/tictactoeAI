@@ -2,7 +2,7 @@
 #include "weightsManager.h"
 using namespace std;
 
-void trainModel(float weightsLayerOne_parent[10][9], float weightsLayerTwo_parent[9][9], float creativity, int generationSize, int rewardForWin, int rewardForTie, int gamesPerIndividual, int numGenerations, float weightsLayerOne[9][9], float weightsLayerTwo[9][9]);
+void trainModel(float weightsLayerOne_parent[10][9], float weightsLayerTwo_parent[9][9], float creativity, int generationSize, int rewardForWin, int rewardForTie, int rewardForLoss, int gamesPerIndividual, int numGenerations, float weightsLayerOne[9][9], float weightsLayerTwo[9][9]);
 
 int main() {
     /* initialize variables */
@@ -10,8 +10,9 @@ int main() {
     string matrix[9];
     float creativity = 0.1f;
     int generationSize = 10;
-    int rewardForWin = 2;
-    int rewardForTie = 1;
+    int rewardForWin = 1;
+    int rewardForTie = 0;
+    int rewardForLoss = -1;
     int gamesPerIndividual = 100;
     int numGenerations = 1000;
 
@@ -24,7 +25,7 @@ int main() {
     /* train model */
     float weightsLayerOne[10][9];
     float weightsLayerTwo[9][9];
-    trainModel(weightsLayerOne_parent, weightsLayerTwo_parent, creativity, generationSize, rewardForWin, rewardForTie, gamesPerIndividual, numGenerations, weightsLayerOne, weightsLayerTwo);
+    trainModel(weightsLayerOne_parent, weightsLayerTwo_parent, creativity, generationSize, rewardForWin, rewardForTie, rewardForLoss, gamesPerIndividual, numGenerations, weightsLayerOne, weightsLayerTwo);
 
     /* time to play against trained AI */
     bool playAgain = true;
@@ -119,7 +120,7 @@ int main() {
 }
 
 
-void trainModel(float weightsLayerOne_parent[10][9], float weightsLayerTwo_parent[9][9], float creativity, int generationSize, int rewardForWin, int rewardForTie, int gamesPerIndividual, int numGenerations, float weightsLayerOne[10][9], float weightsLayerTwo[9][9]){
+void trainModel(float weightsLayerOne_parent[10][9], float weightsLayerTwo_parent[9][9], float creativity, int generationSize, int rewardForWin, int rewardForTie, int rewardForLoss, int gamesPerIndividual, int numGenerations, float weightsLayerOne[10][9], float weightsLayerTwo[9][9]){
     /* initialize variables */
     string symbol;
     string matrix[9];
@@ -233,6 +234,8 @@ void trainModel(float weightsLayerOne_parent[10][9], float weightsLayerTwo_paren
                 if (checkWin(matrix, symbol)) {
                     if (childMoveLast){
                         scoreBoard[child_ID] += rewardForWin;
+                    } else {
+                        scoreBoard[child_ID] += rewardForLoss;
                     }
                 } else {
                     scoreBoard[child_ID] += rewardForTie;
