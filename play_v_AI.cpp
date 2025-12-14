@@ -5,16 +5,12 @@ using namespace std;
 void randomizeWeights(float weightsLayerOne[9][9], float weightsLayerTwo[9][9]);
 
 int main(){
-    /* initialize variables */
-    string symbol;
-    string matrix[9];
-
     /* randomize weights */
     float weightsLayerOne[9][9];
     float weightsLayerTwo[9][9];
     randomizeWeights(weightsLayerOne, weightsLayerTwo);
 
-    /* create a 1x9 matrix of dashes*/
+    /* create a 1x9 matrix of dashes */
     initializeBoard(matrix);
 
     /* print a 3x3 grid of dashes */
@@ -29,6 +25,10 @@ int main(){
 
     /* main loop */
     for (int i = 0; i < 9; i++) {
+        /* initialize variables */
+        string symbol;
+        string matrix[9];
+
         /* if x is even, symbol is "x", otherwise "o" */
         symbol = getSymbol(i);
         
