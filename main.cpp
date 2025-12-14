@@ -2,14 +2,10 @@
 #include "weightsManager.h"
 using namespace std;
 
-int main() {
-    /* BETTER seed random generator */
-    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-    srand(seed);
+void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent[9][9], float creativity, int generationSize, int rewardForWin, int rewardForTie, int gamesPerIndividual, int numGenerations, float bestWeights[2][9][9]);
 
+int main() {
     /* initialize variables */
-    string symbol;
-    string matrix[9];
     float creativity = 0.1f;
     int generationSize = 10;
     int rewardForWin = 2;
@@ -22,6 +18,20 @@ int main() {
     randomWeights(weightsLayerOne_parent);
     float weightsLayerTwo_parent[9][9];
     randomWeights(weightsLayerTwo_parent);
+
+    float bestWeights[2][9][9];
+    trainModel(weightsLayerOne_parent, weightsLayerTwo_parent, creativity, generationSize, rewardForWin, rewardForTie, gamesPerIndividual, numGenerations, bestWeights);
+}
+
+
+void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent[9][9], float creativity, int generationSize, int rewardForWin, int rewardForTie, int gamesPerIndividual, int numGenerations, float bestWeights[2][9][9]){
+    /* BETTER seed random generator */
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    srand(seed);
+
+    /* initialize variables */
+    string symbol;
+    string matrix[9];
 
     for (int gen_ID = 0; gen_ID < numGenerations; gen_ID++){
         /* propogate a generation */
@@ -137,6 +147,14 @@ int main() {
                 weightsLayerOne_parent[i][j] = weightsStackOne[max_index][i][j];
                 weightsLayerTwo_parent[i][j] = weightsStackTwo[max_index][i][j];
             }
+        }
+    }
+
+    /* return weights of best of last generation */
+    for (int i = 0; i < 9; i++){
+        for (int j = 0; j < 9; j++){
+            bestWeights[0][i][j] = weightsLayerOne_parent[i][j];
+            bestWeights[1][i][j] = weightsLayerTwo_parent[i][j];
         }
     }
 }
