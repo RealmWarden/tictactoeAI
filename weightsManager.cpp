@@ -11,7 +11,7 @@ void randomWeights(float weightsLayer[9][9]) {
     }
 }
 
-void boardToInputLayer(const string matrix[9], float inputLayer[9]){
+void boardToInputLayer(const string matrix[9], float inputLayer[10], bool meFirst){
     for (int i = 0; i < 9; i++) {
         if (matrix[i] == "x") {
             inputLayer[i] = 1;
@@ -21,9 +21,23 @@ void boardToInputLayer(const string matrix[9], float inputLayer[9]){
             inputLayer[i] = 0;
         }
     }
+    if (meFirst){
+        inputLayer[9] = 1;
+    } else {
+        inputLayer[9] = -1;
+    }
 }
 
-void passThroughLayer(const float inputLayer[9], const float weightsLayer[9][9], float outputLayer[9]){
+void passThroughLayerOne(const float inputLayer[10], const float weightsLayer[10][9], float outputLayer[9]){
+    for (int i = 0; i < 9; i++) {
+        outputLayer[i] = 0;
+        for (int j = 0; j < 10; j++) {
+            outputLayer[i] += inputLayer[j] * weightsLayer[j][i];
+        }
+    }
+}
+
+void passThroughLayerTwo(const float inputLayer[9], const float weightsLayer[9][9], float outputLayer[9]){
     for (int i = 0; i < 9; i++) {
         outputLayer[i] = 0;
         for (int j = 0; j < 9; j++) {

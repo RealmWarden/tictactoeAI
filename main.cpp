@@ -2,7 +2,7 @@
 #include "weightsManager.h"
 using namespace std;
 
-void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent[9][9], float creativity, int generationSize, int rewardForWin, int rewardForTie, int gamesPerIndividual, int numGenerations, float weightsLayerOne[9][9], float weightsLayerTwo[9][9]);
+void trainModel(float weightsLayerOne_parent[10][9], float weightsLayerTwo_parent[9][9], float creativity, int generationSize, int rewardForWin, int rewardForTie, int gamesPerIndividual, int numGenerations, float weightsLayerOne[9][9], float weightsLayerTwo[9][9]);
 
 int main() {
     /* initialize variables */
@@ -16,13 +16,13 @@ int main() {
     int numGenerations = 1000;
 
     /* initialize random weights for neural network */
-    float weightsLayerOne_parent[9][9];
+    float weightsLayerOne_parent[10][9];
     randomWeights(weightsLayerOne_parent);
     float weightsLayerTwo_parent[9][9];
     randomWeights(weightsLayerTwo_parent);
 
     /* train model */
-    float weightsLayerOne[9][9];
+    float weightsLayerOne[10][9];
     float weightsLayerTwo[9][9];
     trainModel(weightsLayerOne_parent, weightsLayerTwo_parent, creativity, generationSize, rewardForWin, rewardForTie, gamesPerIndividual, numGenerations, weightsLayerOne, weightsLayerTwo);
 
@@ -44,9 +44,11 @@ int main() {
 
         /* decide who is first */
         bool usersTurn = true;
+        bool meFirst = false;
         int coinFlip = rand() % 2;
         if (coinFlip == 1){
             usersTurn = false;
+            meFirst = true;
         }
 
         /* main loop */
@@ -55,8 +57,8 @@ int main() {
             symbol = getSymbol(i);
             
             int userInput;
-            float inputLayer[9];
-            boardToInputLayer(matrix, inputLayer);
+            float inputLayer[10];
+            boardToInputLayer(matrix, inputLayer, meFirst);
             
             /* decide who is control */
             if (usersTurn){
@@ -65,9 +67,9 @@ int main() {
             } else {
                 /* THIS IS WHERE THE DECISION MAKING GOES */
                 float outputLayerOne[9];
-                passThroughLayer(inputLayer, weightsLayerOne, outputLayerOne);
+                passThroughLayerOne(inputLayer, weightsLayerOne, outputLayerOne);
                 float outputLayerTwo[9];
-                passThroughLayer(outputLayerOne, weightsLayerTwo, outputLayerTwo);
+                passThroughLayerTwo(outputLayerOne, weightsLayerTwo, outputLayerTwo);
                 userInput = getOutput(outputLayerTwo, matrix);
             }
             
@@ -117,10 +119,11 @@ int main() {
 }
 
 
-void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent[9][9], float creativity, int generationSize, int rewardForWin, int rewardForTie, int gamesPerIndividual, int numGenerations, float weightsLayerOne[9][9], float weightsLayerTwo[9][9]){
+void trainModel(float weightsLayerOne_parent[10][9], float weightsLayerTwo_parent[9][9], float creativity, int generationSize, int rewardForWin, int rewardForTie, int gamesPerIndividual, int numGenerations, float weightsLayerOne[10][9], float weightsLayerTwo[9][9]){
     /* initialize variables */
     string symbol;
     string matrix[9];
+    bool childMoveLast;
     
     /* BETTER seed random generator */
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
@@ -128,15 +131,17 @@ void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent
 
     for (int gen_ID = 0; gen_ID < numGenerations; gen_ID++){
         /* propogate a generation */
-        float weightsStackOne[generationSize][9][9];
+        float weightsStackOne[generationSize][10][9];
         float weightsStackTwo[generationSize][9][9];
         for (int i = 0; i < generationSize; i++) {
-            for (int j = 0; j < 9; j++){
+            for (int j = 0; j < 10; j++){
                 for (int k = 0; k < 9; k++){
                     float r1 = (float)rand() / RAND_MAX;
                     weightsStackOne[i][j][k] = weightsLayerOne_parent[j][k] + ((r1-0.5f)*creativity);
-                    float r2 = (float)rand() / RAND_MAX;
-                    weightsStackTwo[i][j][k] = weightsLayerTwo_parent[j][k] + ((r2-0.5f)*creativity);
+                    if (j != 9){
+                        float r2 = (float)rand() / RAND_MAX;
+                        weightsStackTwo[i][j][k] = weightsLayerTwo_parent[j][k] + ((r2-0.5f)*creativity);
+                    }
                 }
             }
         }
@@ -149,8 +154,8 @@ void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent
 
         for (int child_ID = 0; child_ID < generationSize; child_ID++){
             /* assign child weights */
-            float weightsLayerOne_child[9][9];
-            for (int i = 0; i < 9; i++){
+            float weightsLayerOne_child[10][9];
+            for (int i = 0; i < 10; i++){
                 for (int j = 0; j < 9; j++){
                     weightsLayerOne_child[i][j] = weightsStackOne[child_ID][i][j];
                 }
@@ -169,9 +174,11 @@ void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent
 
                 /* decide who is first */
                 bool parentsTurn = true;
+                bool meFirst = false;
                 int coinFlip = rand() % 2;
                 if (coinFlip == 1){
                     parentsTurn = false;
+                    meFirst = true;
                 }
 
                 /* play a game */
@@ -180,24 +187,31 @@ void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent
                     symbol = getSymbol(i);   
 
                     int userInput;
-                    float inputLayer[9];
-                    boardToInputLayer(matrix, inputLayer);
+                    float inputLayer[10];
                     
                     /* decide who is control */
                     if (parentsTurn){
+                        boardToInputLayer(matrix, inputLayer, !meFirst);
                         /* THIS IS WHERE THE DECISION MAKING GOES */
                         float outputLayerOne[9];
-                        passThroughLayer(inputLayer, weightsLayerOne_parent, outputLayerOne);
+                        passThroughLayerOne(inputLayer, weightsLayerOne_parent, outputLayerOne);
                         float outputLayerTwo[9];
-                        passThroughLayer(outputLayerOne, weightsLayerTwo_parent, outputLayerTwo);
+                        passThroughLayerTwo(outputLayerOne, weightsLayerTwo_parent, outputLayerTwo);
                         userInput = getOutput(outputLayerTwo, matrix);
                     } else {
+                        boardToInputLayer(matrix, inputLayer, meFirst);
                         /* THIS IS WHERE THE DECISION MAKING GOES */
                         float outputLayerOne[9];
-                        passThroughLayer(inputLayer, weightsLayerOne_child, outputLayerOne);
+                        passThroughLayerOne(inputLayer, weightsLayerOne_child, outputLayerOne);
                         float outputLayerTwo[9];
-                        passThroughLayer(outputLayerOne, weightsLayerTwo_child, outputLayerTwo);
+                        passThroughLayerTwo(outputLayerOne, weightsLayerTwo_child, outputLayerTwo);
                         userInput = getOutput(outputLayerTwo, matrix);
+                    }
+
+                    /* identify who moved last */
+                    childMoveLast = true;
+                    if (parentsTurn){
+                        childMoveLast = false;
                     }
                     
                     /* flip turn identifier */
@@ -217,7 +231,7 @@ void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent
                 
                 /* assign rewards */
                 if (checkWin(matrix, symbol)) {
-                    if (parentsTurn){
+                    if (childMoveLast){
                         scoreBoard[child_ID] += rewardForWin;
                     }
                 } else {
@@ -226,7 +240,7 @@ void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent
             }
         }
 
-        /* copy best of previous generation to become new parent */
+        /* copy best individual of previous generation to become new parent */
         int max_index = 0;
         int max_val = 0;
         for (int i = 0; i < generationSize; i++) {
@@ -235,19 +249,23 @@ void trainModel(float weightsLayerOne_parent[9][9], float weightsLayerTwo_parent
                 max_index = i; 
             }
         }
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 9; j++) {
                 weightsLayerOne_parent[i][j] = weightsStackOne[max_index][i][j];
-                weightsLayerTwo_parent[i][j] = weightsStackTwo[max_index][i][j];
+                if (i != 9) {
+                    weightsLayerTwo_parent[i][j] = weightsStackTwo[max_index][i][j];
+                }
             }
         }
     }
 
     /* return weights of best of last generation */
-    for (int i = 0; i < 9; i++){
+    for (int i = 0; i < 10; i++){
         for (int j = 0; j < 9; j++){
             weightsLayerOne[i][j] = weightsLayerOne_parent[i][j];
-            weightsLayerTwo[i][j] = weightsLayerTwo_parent[i][j];
+            if (i != 9) {
+                weightsLayerTwo[i][j] = weightsLayerTwo_parent[i][j];
+            }
         }
     }
 }
