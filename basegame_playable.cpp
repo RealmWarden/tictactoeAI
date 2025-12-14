@@ -1,21 +1,10 @@
+#include "tictactoe.h"
 #include <iostream>
-#include <string>
 using namespace std;
-
-void initializeBoard(string matrix[9]);
-void printBoard(const string matrix[9]);
-string getSymbol(int turn);
-bool isMoveValid(const string matrix[9], int position);
-void addMove(string matrix[9], int position, const string symbol);
-bool checkWin(const string matrix[9], const string symbol);
-bool checkTie(const string matrix[9]);
-int getMove(const string matrix[9], const string symbol);
 
 int main(){
     /* initialize variables */
     string symbol;
-    bool win = false;
-    bool tie = false;
     string matrix[9];
 
     /* create a 1x9 matrix of dashes*/
@@ -30,7 +19,7 @@ int main(){
         symbol = getSymbol(i);
         
         /* wait for the user to input a single-digit natural number */
-        int userInput = getMove(matrix, symbol);
+        int userInput = getHumanMove(matrix, symbol);
 
         /* print the symbol in the correct position */
         addMove(matrix, userInput, symbol);
@@ -116,7 +105,7 @@ bool checkTie(const string matrix[9]) {
     return true;
 }
 
-int getMove(const string matrix[9], const string symbol) {
+int getHumanMove(const string matrix[9], const string symbol) {
     int userInput;
     cout << "Please enter a position (1-9) to place your " << symbol << ": ";
     cin >> userInput;
