@@ -2,84 +2,127 @@
 #include <string>
 using namespace std;
 
+void initializeBoard(string matrix[9]);
+void printBoard(const string matrix[9]);
+string getSymbol(int turn);
+bool isMoveValid(const string matrix[9], int position);
+void addMove(string matrix[9], int position, const string symbol);
+bool checkWin(const string matrix[9], const string symbol);
+bool checkTie(const string matrix[9]);
+int getMove(const string matrix[9], const string symbol);
+
 int main(){
     /* initialize variables */
     string symbol;
     bool win = false;
     bool tie = false;
+    string matrix[9];
 
     /* create a 1x9 matrix of dashes*/
-    string matrix[9] = {"-","-","-","-","-","-","-","-","-"};
+    initializeBoard(matrix);
 
     /* print a 3x3 grid of dashes */
+    printBoard(matrix);
+
+    /* main loop */
+    for (int i = 0; i < 9; i++) {
+        /* if x is even, symbol is "x", otherwise "o" */
+        symbol = getSymbol(i);
+        
+        /* wait for the user to input a single-digit natural number */
+        int userInput = getMove(matrix, symbol);
+
+        /* print the symbol in the correct position */
+        addMove(matrix, userInput, symbol);
+        printBoard(matrix);
+
+        /* check for a win */
+        if (checkWin(matrix, symbol)) {
+            break;
+        }
+
+        /* check for a tie */
+        if (checkTie(matrix)) {
+            break;
+        }
+    }
+
+    if (checkWin(matrix, symbol)) {
+        cout << "The winner is: " << symbol << "!" << endl;
+    } else {
+        cout << "Tie!" << endl;
+    }
+}
+
+
+void initializeBoard(string matrix[9]) {
+    for (int i = 0; i < 9; i++) {
+        matrix[i] = "-";
+    }
+}
+
+void printBoard(const string matrix[9]) {
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             cout << matrix[i * 3 + j];
         }
         cout << endl;
     }
+}
 
-    /* main loop */
-    for (int i = 0; i < 9; i++) {
-        /* if x is even, symbol is "x", otherwise "o" */
-        symbol = "o";
-        if (i % 2 == 0) {
-            symbol = "x";
-        }
-        
-        /* wait for the user to input a single-digit natural number */
-        int userInput;
-        cout << "Please enter a position (1-9) to place your " << symbol << ": ";
-        cin >> userInput;
-        while (userInput < 1 || userInput > 9 || matrix[userInput-1] != "-") {
-            if (matrix[userInput-1] != "-") {
-                cout << "Position already taken. Please enter a different position: ";
-            } 
-            else {
-                cout << "Position outside of range. Please enter a number between 1 and 9: ";
-            }
-            cin >> userInput;
-        }
-
-        /* print the symbol in the correct position */
-        matrix[userInput-1] = symbol;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                cout << matrix[i * 3 + j];
-            }
-            cout << endl;
-        }
-
-        /* check for a win */
-        if ((matrix[0] == symbol && matrix[1] == symbol && matrix[2] == symbol) ||
-            (matrix[3] == symbol && matrix[4] == symbol && matrix[5] == symbol) ||
-            (matrix[6] == symbol && matrix[7] == symbol && matrix[8] == symbol) ||
-            (matrix[0] == symbol && matrix[3] == symbol && matrix[6] == symbol) ||
-            (matrix[1] == symbol && matrix[4] == symbol && matrix[7] == symbol) ||
-            (matrix[2] == symbol && matrix[5] == symbol && matrix[8] == symbol) ||
-            (matrix[0] == symbol && matrix[4] == symbol && matrix[8] == symbol) ||
-            (matrix[2] == symbol && matrix[4] == symbol && matrix[6] == symbol)) {
-            win = true;
-            break;
-        }
-
-        /* check for a tie */
-        for (int i = 0; i < 9; i++) {
-            if (matrix[i] == "-") {
-                break;
-            }
-            if (i == 8) {
-                tie = true;
-            }
-        }
-        if (tie) {
-            break;
-        }
+string getSymbol(int turn) {
+    if (turn % 2 == 0) {
+        return "x";
+    } 
+    else {
+        return "o";
     }
+}
 
-    if (win) {
-        cout << "The winner is: " << symbol << "!" << endl;
+bool isMoveValid(const string matrix[9], int userInput) {
+    if (userInput < 1 || userInput > 9 || matrix[userInput-1] != "-") {
+        return false;
     } else {
-        cout << "Tie!" << endl;
+        return true;
     }
+}
+
+void addMove(string matrix[9], int position, const string symbol) {
+    matrix[position-1] = symbol;
+}
+
+bool checkWin(const string matrix[9], const string symbol) {
+    if ((matrix[0] == symbol && matrix[1] == symbol && matrix[2] == symbol) ||
+        (matrix[3] == symbol && matrix[4] == symbol && matrix[5] == symbol) ||
+        (matrix[6] == symbol && matrix[7] == symbol && matrix[8] == symbol) ||
+        (matrix[0] == symbol && matrix[3] == symbol && matrix[6] == symbol) ||
+        (matrix[1] == symbol && matrix[4] == symbol && matrix[7] == symbol) ||
+        (matrix[2] == symbol && matrix[5] == symbol && matrix[8] == symbol) ||
+        (matrix[0] == symbol && matrix[4] == symbol && matrix[8] == symbol) ||
+        (matrix[2] == symbol && matrix[4] == symbol && matrix[6] == symbol)) {
+        return true;
+    } 
+    else {
+        return false;
+    }
+}
+
+bool checkTie(const string matrix[9]) {
+    for (int j = 0; j < 9; j++) {
+        if (matrix[j] == "-") {
+            return false;
+        }
+    }
+    return true;
+}
+
+int getMove(const string matrix[9], const string symbol) {
+    int userInput;
+    cout << "Please enter a position (1-9) to place your " << symbol << ": ";
+    cin >> userInput;
+    while (!isMoveValid(matrix, userInput)) {
+        cout << "Invalid move. Please enter a position (1-9) to place your " << symbol << ": ";
+        cin >> userInput;
+    }
+    return userInput;
 }
