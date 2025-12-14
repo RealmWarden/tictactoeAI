@@ -8,13 +8,13 @@ int main() {
     /* initialize variables */
     string symbol;
     string matrix[9];
-    float creativity = 0.1f;
-    int generationSize = 10;
-    int rewardForWin = 1;
-    int rewardForTie = 0;
-    int rewardForLoss = -1;
-    int gamesPerIndividual = 100;
-    int numGenerations = 1000;
+    float creativity = 0.02f;
+    int generationSize = 100;
+    int rewardForWin = 3;
+    int rewardForTie = 1;
+    int rewardForLoss = -3;
+    int gamesPerIndividual = 200;
+    int numGenerations = 2000;
 
     /* initialize random weights for neural network */
     float weightsLayerOne_parent[10][9];
@@ -26,6 +26,20 @@ int main() {
     float weightsLayerOne[10][9];
     float weightsLayerTwo[9][9];
     trainModel(weightsLayerOne_parent, weightsLayerTwo_parent, creativity, generationSize, rewardForWin, rewardForTie, rewardForLoss, gamesPerIndividual, numGenerations, weightsLayerOne, weightsLayerTwo);
+
+    /* print out weights for external use */
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 9; j++) {
+            cout << weightsLayerOne[i][j] << " ";
+        }
+        cout << endl;
+    }
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            cout << weightsLayerTwo[i][j] << " ";
+        }
+        cout << endl;
+    }
 
     /* time to play against trained AI */
     bool playAgain = true;
