@@ -3,8 +3,6 @@
 #include <ctime> // for seeding rand()
 using namespace std;
 
-int getRandomMove(const string matrix[9]);
-
 int main(){
     /* seed random generator */
     srand(time(NULL));

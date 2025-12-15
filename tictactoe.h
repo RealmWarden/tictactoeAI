@@ -12,3 +12,4 @@ bool checkWin(const string matrix[9], const string symbol);
 bool checkTie(const string matrix[9]);
 int getMove(const string matrix[9], const string symbol);
 int getHumanMove(const string matrix[9], const string symbol);
+int getRandomMove(const string matrix[9]);
