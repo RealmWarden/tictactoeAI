@@ -28,18 +28,29 @@ int main() {
     trainModel(weightsLayerOne_parent, weightsLayerTwo_parent, creativity, generationSize, rewardForWin, rewardForTie, rewardForLoss, gamesPerIndividual, numGenerations, weightsLayerOne, weightsLayerTwo);
 
     /* print out weights for external use */
+    ofstream outFile("trained_weights.txt");
+    if (!outFile) {
+        cerr << "Failed to open trained_weights.txt for writing." << endl;
+        return 1;
+    }
+
+    /* write layer one */
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 9; j++) {
-            cout << weightsLayerOne[i][j] << " ";
+            outFile << weightsLayerOne[i][j] << " ";
         }
-        cout << endl;
+        outFile << endl;
     }
+
+    /* write layer two */
     for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
-            cout << weightsLayerTwo[i][j] << " ";
+            outFile << weightsLayerTwo[i][j] << " ";
         }
-        cout << endl;
+        outFile << endl;
     }
+
+    outFile.close();
 
     /* time to play against trained AI */
     bool playAgain = true;

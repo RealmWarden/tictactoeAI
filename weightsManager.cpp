@@ -58,3 +58,21 @@ int getOutput(const float outputLayer[9], const string matrix[9]){
     }
     return maxOutput+1;
 }
+
+void loadWeights(const string& filename, float weightsLayerOne[10][9], float weightsLayerTwo[9][9]) {
+    ifstream inFile(filename);
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 9; j++) {
+            inFile >> weightsLayerOne[i][j];
+        }
+    }
+
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+            inFile >> weightsLayerTwo[i][j];
+        }
+    }
+
+    inFile.close();
+}
