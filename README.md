@@ -71,21 +71,21 @@ g++ trained_v_random_auto.cpp tictactoe.cpp weightsManager.cpp -o trained_v_rand
 
 ## Executables
 
-# basegame_playable
+### basegame_playable
 - Pure human vs human Tic Tac Toe.
 - Demonstrates the basic game loop, board rendering, and win/tie detection.
-# random_player
+### random_player
 - Random move AI plays by itself.
 - Useful as a baseline for testing computer interface with game.
-# main
+### main
 - Evolves a two-layer linear network via self-play.
 - Saves final weights to trained_weights.txt.
 - Lets a human play against the trained AI in terminal.
-# play_v_AI
+### play_v_AI
 - Loads weights from trained_weights.txt (or randomizes them).
 - Human can play against trained or untrained AI.
 - Demonstrates AI inference separate from training.
-# trained_v_random_auto
+### trained_v_random_auto
 - Runs automated simulations between trained AI and random AI.
 - Tracks wins, losses, and ties over 1,000,000 iterations.
 - Provides statistical validation of the trained AI’s performance.
@@ -132,11 +132,11 @@ Hyperparameters are configurable in main.cpp:
 ---
 
 ## Usage Example
-# Train AI and play interactively
+### Train AI and play interactively
 ./trainAI
-# Play against a trained AI or untrained AI
+### Play against a trained AI or untrained AI
 ./playAI
-# Run automated evaluation
+### Run automated evaluation
 ./evalAI
 
 ---
