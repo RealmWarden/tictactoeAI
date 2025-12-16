@@ -143,10 +143,10 @@ Hyperparameters are configurable in main.cpp:
 
 ## Notes
 - Board positions are numbered 1–9, top-left to bottom-right:
-
+```plaintext
 1 2 3
 4 5 6
 7 8 9
-
+```
 - Random number generators are seeded with the current time for stochastic behavior.
 - The network is intentionally minimal, demonstrating linear policy evolution without complex ML frameworks.
