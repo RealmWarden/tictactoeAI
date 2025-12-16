@@ -105,16 +105,16 @@ g++ trained_v_random_auto.cpp tictactoe.cpp weightsManager.cpp -o trained_v_rand
 
 ## Training Method
 The AI is trained via a simple evolutionary strategy:
-    1. Start with a parent network with random weights.
-    2. Generate a population of mutated children (controlled by creativity).
-    3. Children play repeated games against the parent network.
-    4. Each child is scored:
-        - rewardForWin for a win
-        - rewardForTie for a tie
-        - rewardForLoss for a loss
-    5. The best child becomes the new parent for the next generation.
-    6. Repeat for numGenerations generations.
-    7. Save the best network to trained_weights.txt.
+1. Start with a parent network with random weights.
+2. Generate a population of mutated children (controlled by creativity).
+3. Children play repeated games against the parent network.
+4. Each child is scored:
+    - rewardForWin for a win
+    - rewardForTie for a tie
+    - rewardForLoss for a loss
+5. The best child becomes the new parent for the next generation.
+6. Repeat for numGenerations generations.
+7. Save the best network to trained_weights.txt.
 Hyperparameters are configurable in main.cpp:
     - creativity – mutation magnitude
     - generationSize – number of children per generation
